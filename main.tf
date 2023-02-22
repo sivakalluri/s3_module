@@ -26,14 +26,17 @@ resource "aws_s3_bucket_acl" "the_acl" {
 
 
 
-resource "aws_s3_bucket_object" "s3_uploads" {
-  for_each = fileset("./s3_upload/", "*")
+
+
+resource "aws_s3_bucket_object" "_s3_uploads" {
+  for_each = fileset("${path.module}/s3_upload/", "**/*")
   bucket = aws_s3_bucket.app_bucket.id
   acl         = "private"
   key = each.value
-  source = "./s3_upload/${each.value}"
-  etag = filemd5("./s3_upload/${each.value}")
+  source = "${path.module}/s3_upload/${each.value}"
+  etag = filemd5("${path.module}/s3_upload/${each.value}")
 }
+
 
 resource "aws_s3_bucket_object" "_dags_folder" {
     bucket      = aws_s3_bucket.app_bucket.id
